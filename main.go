@@ -22,6 +22,17 @@ var selectMap = map[string]string{
 
 var selectOptionsOfEmoji = util.GetKeysOfMap(selectMap)
 
+var prepareCommitShell = `#! /bin/bash
+exec < /dev/tty
+./comifer
+exec < /dev/null
+
+commit_log=$(cat ./.commitlog-tmp)
+rm ./.commitlog-tmp
+sed -i '.bak' "1s/^/${commit_log}/" $1
+echo $commit_log%
+`
+
 var qs = []*survey.Question{
 	{
 		Name: "type",
@@ -44,23 +55,34 @@ func main() {
 		Version: "0.0.1",
 		Usage:   "make emoji prefixed git commit log",
 		Action: func(c *cli.Context) error {
-			answers := struct {
-				Type    string
-				Message string
-			}{}
+			if c.NArg() == 1 && c.Args().Get(0) == "init" {
+				f, err := os.Create(".git/hooks/prepare-commit-msg")
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = f.Write([]byte(prepareCommitShell))
+				fmt.Println("correctly initialized")
+			} else if c.NArg() == 0 {
+				answers := struct {
+					Type    string
+					Message string
+				}{}
 
-			err := survey.Ask(qs, &answers)
-			if err != nil {
-				log.Fatal(err)
-			}
-			commitMessage := fmt.Sprintf("%s %s\n", selectMap[answers.Type], answers.Message)
-			f, err := os.Create("./.commitlog-tmp")
-			if err != nil {
-				log.Fatal(err)
-			}
-			_, err = f.Write([]byte(commitMessage))
-			if err != nil {
-				log.Fatal(err)
+				err := survey.Ask(qs, &answers)
+				if err != nil {
+					log.Fatal(err)
+				}
+				commitMessage := fmt.Sprintf("%s %s\n", selectMap[answers.Type], answers.Message)
+				f, err := os.Create("./.commitlog-tmp")
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = f.Write([]byte(commitMessage))
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				cli.ShowAppHelp(c)
 			}
 			return nil
 		},
