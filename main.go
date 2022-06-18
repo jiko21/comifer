@@ -16,8 +16,8 @@ var featureMap = map[string]string{
 }
 
 var selectMap = map[string]string{
-	"🚀 improve performance": ":improve:",
-	"🐛 fix bug":             ":bug:",
+	"\U0001f680 improve performance": ":improve:",
+	"\U0001f41b fix bug":             ":bug:",
 }
 
 var selectOptionsOfEmoji = util.GetKeysOfMap(selectMap)
