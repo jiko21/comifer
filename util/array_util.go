@@ -11,10 +11,11 @@ func GetKeysOfMap[K comparable, T any](maps map[K]T) []K {
 }
 
 func GetValuesOfMap[K comparable, T any](maps map[K]T) []T {
+	keys := GetKeysOfMap(maps)
 	arr := make([]T, len(maps))
 	i := 0
-	for _, v := range maps {
-		arr[i] = v
+	for _, k := range keys {
+		arr[i] = maps[k]
 		i++
 	}
 	return arr
