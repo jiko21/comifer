@@ -11,12 +11,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var featureMap = map[string]string{
-	"🤖 Android": ":robot:",
-	"🍎 iOS":     ":apple:",
-	"👪 共通範囲":    ":family:",
-}
-
 var selectMap = map[string]string{
 	"\U0001f680 improve performance": ":improve:",
 	"\U0001f41b fix bug":             ":bug:",
