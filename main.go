@@ -3,10 +3,12 @@ package main
 import (
 	"comifer/util"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/urfave/cli/v2"
 	"log"
 	"os"
+	"runtime"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/urfave/cli/v2"
 )
 
 var featureMap = map[string]string{
@@ -22,7 +24,7 @@ var selectMap = map[string]string{
 
 var selectOptionsOfEmoji = util.GetKeysOfMap(selectMap)
 
-var prepareCommitShell = `#! /bin/bash
+var prepareMacCommitShell = `#! /bin/bash
 exec < /dev/tty
 ./comifer
 exec < /dev/null
@@ -30,6 +32,17 @@ exec < /dev/null
 commit_log=$(cat ./.commitlog-tmp)
 rm ./.commitlog-tmp
 sed -i '.bak' "1s/^/${commit_log}/" $1
+echo $commit_log%
+`
+
+var prepareLinuxCommitShell = `#! /bin/bash
+exec < /dev/tty
+./comifer
+exec < /dev/null
+
+commit_log=$(cat ./.commitlog-tmp)
+rm ./.commitlog-tmp
+sed -i "1s/^/${commit_log}/" $1
 echo $commit_log%
 `
 
@@ -60,7 +73,14 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				_, err = f.Write([]byte(prepareCommitShell))
+				if runtime.GOOS == "limux" {
+					_, err = f.Write([]byte(prepareLinuxCommitShell))
+				} else if runtime.GOOS == "darwin" {
+					_, err = f.Write([]byte(prepareMacCommitShell))
+				} else {
+					fmt.Printf("sorry... we not support %s.\n", runtime.GOOS)
+					return nil
+				}
 				fmt.Println("correctly initialized")
 			} else if c.NArg() == 0 {
 				answers := struct {
