@@ -67,7 +67,7 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				if runtime.GOOS == "limux" {
+				if runtime.GOOS == "linux" {
 					_, err = f.Write([]byte(prepareLinuxCommitShell))
 				} else if runtime.GOOS == "darwin" {
 					_, err = f.Write([]byte(prepareMacCommitShell))
