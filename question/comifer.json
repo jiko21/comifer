@@ -1,0 +1,23 @@
+{
+  "format": "$1 $2",
+  "steps": [
+    {
+      "type": "select",
+      "message": "変更内容",
+      "options": [
+        {
+          "value": ":bug:",
+          "description": "🐛 bug fix"
+        },
+        {
+          "value": ":+1:",
+          "description": "👍 機能改善"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "message": "commit message"
+    }
+  ]
+}
