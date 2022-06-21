@@ -9,14 +9,3 @@ func GetKeysOfMap[K comparable, T any](maps map[K]T) []K {
 	}
 	return arr
 }
-
-func GetValuesOfMap[K comparable, T any](maps map[K]T) []T {
-	keys := GetKeysOfMap(maps)
-	arr := make([]T, len(maps))
-	i := 0
-	for _, k := range keys {
-		arr[i] = maps[k]
-		i++
-	}
-	return arr
-}
