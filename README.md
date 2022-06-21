@@ -58,3 +58,10 @@ Each `steps` item has `message` field for asking question via cli.
 
 #### text
 `text` represents an action to fill text message for commit via terminal.
+
+## How to install
+For mac users, comifer can be installed via homebrew.
+```bash
+brew tap jiko21/comifer
+brew install comifer
+```
