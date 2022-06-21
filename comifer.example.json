@@ -7,11 +7,11 @@
       "options": [
         {
           "value": ":bug:",
-          "description": "🐛 bug fix"
+          "description": "bug fix"
         },
         {
           "value": ":+1:",
-          "description": "👍 機能改善"
+          "description": "plus one"
         }
       ]
     },
