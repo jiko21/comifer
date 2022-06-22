@@ -46,7 +46,7 @@ echo $commit_log%
 func main() {
 	app := &cli.App{
 		Name:    "comifer",
-		Version: "0.0.1",
+		Version: "0.0.2",
 		Usage:   "make emoji prefixed git commit log",
 		Action: func(c *cli.Context) error {
 			if c.NArg() == 1 && c.Args().Get(0) == "init" {
