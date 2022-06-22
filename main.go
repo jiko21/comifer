@@ -20,7 +20,7 @@ var selectOptionsOfEmoji = util.GetKeysOfMap(selectMap)
 
 var prepareMacCommitShell = `#! /bin/bash
 exec < /dev/tty
-./comifer
+comifer
 exec < /dev/null
 
 commit_log=$(cat ./.commitlog-tmp)
@@ -31,7 +31,7 @@ echo $commit_log%
 
 var prepareLinuxCommitShell = `#! /bin/bash
 exec < /dev/tty
-./comifer
+comifer
 exec < /dev/null
 
 commit_log=$(cat ./.commitlog-tmp)
