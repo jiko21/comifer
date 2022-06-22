@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"runtime"
 
 	"github.com/urfave/cli/v2"
 )
+
+var execCommand = exec.Command
 
 var selectMap = map[string]string{
 	"\U0001f680 improve performance": ":improve:",
@@ -57,6 +60,11 @@ func main() {
 					_, err = f.Write([]byte(prepareMacCommitShell))
 				} else {
 					fmt.Printf("sorry... we not support %s.\n", runtime.GOOS)
+					return nil
+				}
+				_, err = execCommand("chmod", "a+x", ".git/hooks/prepare-commit-msg").Output()
+				if err != nil {
+					log.Fatal(err)
 					return nil
 				}
 				fmt.Println("correctly initialized")
