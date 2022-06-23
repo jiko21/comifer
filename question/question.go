@@ -69,7 +69,7 @@ func GenerateQuestionConfig() Config {
 
 func GetValueFromSelect(options []Option, selectedValue string) string {
 	for _, option := range options {
-		if option.Description == selectedValue {
+		if norm.NFD.String(option.Description) == norm.NFD.String(selectedValue) {
 			return option.Value
 		}
 	}
