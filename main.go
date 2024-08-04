@@ -54,6 +54,12 @@ sed -i "1s/^/${commit_log}/" $1
 echo $commit_log%
 `
 
+var prepareShells = map[string]string{
+	"linux":   prepareLinuxCommitShell,
+	"darwin":  prepareMacCommitShell,
+	"windows": prepareWindowsCommitShell,
+}
+
 func main() {
 	app := &cli.App{
 		Name:    "comifer",
@@ -65,12 +71,10 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				if runtime.GOOS == "linux" {
-					_, err = f.Write([]byte(prepareLinuxCommitShell))
-				} else if runtime.GOOS == "darwin" {
-					_, err = f.Write([]byte(prepareMacCommitShell))
-				} else {
-					_, err = f.Write([]byte(prepareWindowsCommitShell))
+				_, err = f.Write([]byte(prepareShells[runtime.GOOS]))
+				if err != nil {
+					log.Fatal(err)
+					return nil
 				}
 				_, err = execCommand("chmod", "a+x", ".git/hooks/prepare-commit-msg").Output()
 				if err != nil {
