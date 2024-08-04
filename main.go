@@ -21,6 +21,17 @@ var selectMap = map[string]string{
 
 var selectOptionsOfEmoji = util.GetKeysOfMap(selectMap)
 
+var prepareWindowsCommitShell = `#! /bin/bash
+exec < /dev/tty
+comifer
+exec < /dev/null
+
+commit_log=$(cat ./.commitlog-tmp)
+rm ./.commitlog-tmp
+sed -i "1s/^/${commit_log}/" $1
+echo $commit_log%
+`
+
 var prepareMacCommitShell = `#! /bin/bash
 exec < /dev/tty
 comifer
@@ -59,8 +70,7 @@ func main() {
 				} else if runtime.GOOS == "darwin" {
 					_, err = f.Write([]byte(prepareMacCommitShell))
 				} else {
-					fmt.Printf("sorry... we not support %s.\n", runtime.GOOS)
-					return nil
+					_, err = f.Write([]byte(prepareWindowsCommitShell))
 				}
 				_, err = execCommand("chmod", "a+x", ".git/hooks/prepare-commit-msg").Output()
 				if err != nil {
