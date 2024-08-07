@@ -1,3 +1,4 @@
+version: 2
 project_name: comifer
 env:
   - GO111MODULE=on
@@ -14,13 +15,13 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
-    replacements:
-      darwin: darwin
-      linux: linux
-      windows: windows
-      386: i386
-      amd64: x86_64
+  - name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_
+      {{- if eq .Os "darwin" }}macOS
+      {{- else if eq .Os "linux" }}Linux
+      {{- else }}{{ .Os }}{{ end }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
     format_overrides:
       - goos: windows
         format: zip
@@ -28,7 +29,7 @@ release:
   prerelease: auto
 brews:
   - description: "git helper for generating commit log with emoji"
-    tap:
+    repository:
       owner: jiko21
       name: homebrew-comifer
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
