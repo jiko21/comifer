@@ -21,6 +21,17 @@ var selectMap = map[string]string{
 
 var selectOptionsOfEmoji = util.GetKeysOfMap(selectMap)
 
+var prepareWindowsCommitShell = `#! /bin/bash
+exec < /dev/tty
+comifer
+exec < /dev/null
+
+commit_log=$(cat ./.commitlog-tmp)
+rm ./.commitlog-tmp
+sed -i "1s/^/${commit_log}/" $1
+echo $commit_log%
+`
+
 var prepareMacCommitShell = `#! /bin/bash
 exec < /dev/tty
 comifer
@@ -43,10 +54,16 @@ sed -i "1s/^/${commit_log}/" $1
 echo $commit_log%
 `
 
+var prepareShells = map[string]string{
+	"linux":   prepareLinuxCommitShell,
+	"darwin":  prepareMacCommitShell,
+	"windows": prepareWindowsCommitShell,
+}
+
 func main() {
 	app := &cli.App{
 		Name:    "comifer",
-		Version: "0.0.3",
+		Version: "0.1.0",
 		Usage:   "make emoji prefixed git commit log",
 		Action: func(c *cli.Context) error {
 			if c.NArg() == 1 && c.Args().Get(0) == "init" {
@@ -54,12 +71,9 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				if runtime.GOOS == "linux" {
-					_, err = f.Write([]byte(prepareLinuxCommitShell))
-				} else if runtime.GOOS == "darwin" {
-					_, err = f.Write([]byte(prepareMacCommitShell))
-				} else {
-					fmt.Printf("sorry... we not support %s.\n", runtime.GOOS)
+				_, err = f.Write([]byte(prepareShells[runtime.GOOS]))
+				if err != nil {
+					log.Fatal(err)
 					return nil
 				}
 				_, err = execCommand("chmod", "a+x", ".git/hooks/prepare-commit-msg").Output()
